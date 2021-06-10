@@ -152,10 +152,7 @@ class Ui_ResultPage(object):
         img = "ImageSourceDirectory/" + id + ".jpg"
         self.result_photo.setPixmap(QtGui.QPixmap(img))
         self.result_photo.setScaledContents(True)
-
         self.result_photo.setObjectName("result_photo")
-        self.result_photo.setStyleSheet("border: 1px solid rgb(9,13,84);\n")
-
         self.result_loc = QtWidgets.QLabel(Dialog)
         self.result_loc.setGeometry(QtCore.QRect(190, 520, 161, 16))
         font = QtGui.QFont()
