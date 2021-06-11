@@ -1,9 +1,19 @@
+
 from PyQt5 import QtCore, QtGui, QtWidgets
+import threading
+
+from main import mainfirebaseinteraction
+
+
+mainthread = threading.Thread(target=mainfirebaseinteraction)
+
 
 class Ui_StartPage(object):
 
     def openWindow(self):
         from Search import Ui_SearchPage
+        print("thread started")
+        mainthread.start()
         self.window = QtWidgets.QDialog()
         self.ui = Ui_SearchPage()
         self.ui.setupUi(self.window)
@@ -97,3 +107,4 @@ if __name__ == "__main__":
     ui.setupUi(Dialog)
     Dialog.show()
     sys.exit(app.exec_())
+

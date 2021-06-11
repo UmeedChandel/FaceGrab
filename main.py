@@ -1,136 +1,130 @@
-import cv2
-import numpy as np
-import face_recognition
-import os
-import datetime
-import pyrebase
+def mainfirebaseinteraction():
+    import cv2
+    import numpy as np
+    import face_recognition
+    import os
+    import datetime
+    import pyrebase
 
-firebaseConfig = {
-    "apiKey": "AIzaSyAGwaYIE3eTwWEkNp_QvmvHpcvUEAvGiIw",
-    "storageURL": "gs://facegrab-c82ff.appspot.com/",
-    "databaseURL": "https://facegrab-c82ff-default-rtdb.asia-southeast1.firebasedatabase.app/",
-    "authDomain": "facegrab-c82ff.firebaseapp.com",
-    "projectId": "facegrab-c82ff",
-    "storageBucket": "facegrab-c82ff.appspot.com",
-    "messagingSenderId": "414897340300",
-    "appId": "1:414897340300:web:39698616f4a6c951fca0a9",
-    "measurementId": "G-0F42EJJR32",
-    "serviceAccount": "facegrabServiceKey.json"
-}
-firebase = pyrebase.initialize_app(firebaseConfig)
+    firebaseConfig = {
+    }
+    firebase = pyrebase.initialize_app(firebaseConfig)
 
-db = firebase.database()
-storage=firebase.storage()
+    db = firebase.database()
+    storage = firebase.storage()
 
-path='ImageSourceDirectory'
-images = []
-classRollnos = []
-myList = os.listdir(path)
-camname = { 0 :"ENTRANCE", 1 : "ADMIN BLOCK" , 2 : "LOBBY", 3 : "CAFETERIA" , 4 : "CONTROL CENTRE" , 5 : "AMPHITHEATRE" }
+    path = 'ImageSourceDirectory'
+    images = []
+    classRollnos = []
+    myList = os.listdir(path)
+    camname = {0: "ENTRANCE", 1: "ADMIN BLOCK", 2: "LOBBY", 3: "CAFETERIA", 4: "CONTROL CENTRE", 5: "AMPHITHEATRE"}
 
-for cl in myList:
-    curImg = cv2.imread(f'{path}/{cl}')
-    images.append(curImg)
-    classRollnos.append(os.path.splitext(cl)[0])
-#print("[INFO: ImageSourceDirectory","Count=",len(myList),",ID's=",classRollnos,"]")
+    for cl in myList:
+        curImg = cv2.imread(f'{path}/{cl}')
+        images.append(curImg)
+        classRollnos.append(os.path.splitext(cl)[0])
 
-def findEncodings(images):
-    encodeList = []
-    for img in images:
-        img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-        encode = face_recognition.face_encodings(img)[0]
-        encodeList.append(encode)
-    return encodeList
+    # print("[INFO: ImageSourceDirectory","Count=",len(myList),",ID's=",classRollnos,"]")
 
-#CODE DUMP
-#INSERT DATA db
-#data={'Name':"PRIYANSH VERMA",'Location':"webcam",'Date':"06/05/21",'Time':"09:21:24"}
-#db.child("csvTable").child("0206cs181118").set(data)
-#data = {'Name': name , 'Location': camname.get(caplist.get(cap)) , 'Date': datenow, 'Time': timenow}
-#db.child("csvTable").child(name).set(data)
-#DOWNLOAD FILE storage
-#cloudfilename=input("File name in storage: ")
-#print(storage.child(cloudfilename).get_url(None))
-#downloadlink=input("URL: ")
-#storage.child(downloadlink).download(img)
+    def findEncodings(images):
+        encodeList = []
+        for img in images:
+            img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+            encode = face_recognition.face_encodings(img)[0]
+            encodeList.append(encode)
+        return encodeList
 
+    # CODE DUMP
+    # INSERT DATA db
+    # data={'Name':"PRIYANSH VERMA",'Location':"webcam",'Date':"06/05/21",'Time':"09:21:24"}
+    # db.child("csvTable").child("0206cs181118").set(data)
+    # data = {'Name': name , 'Location': camname.get(caplist.get(cap)) , 'Date': datenow, 'Time': timenow}
+    # db.child("csvTable").child(name).set(data)
+    # DOWNLOAD FILE storage
+    # cloudfilename=input("File name in storage: ")
+    # print(storage.child(cloudfilename).get_url(None))
+    # downloadlink=input("URL: ")
+    # storage.child(downloadlink).download(img)
 
-def timelocated(name, cap):
-    noww = datetime.datetime.now()
-    datenow = noww.strftime('%Y-%m-%d')
-    timenow = noww.strftime('%I:%M:%S')
+    def timelocated(name, cap):
+        noww = datetime.datetime.now()
+        datenow = noww.strftime('%Y-%m-%d')
+        timenow = noww.strftime('%I:%M:%S')
 
-    personname = db.child("idTable").order_by_key().equal_to(name).get()
-    for person in personname.each():
-        studentname = person.val()['Name']
-    data = {'Name': studentname, 'Location': [camname.get(caplist.get(cap)), datenow, timenow, str(caplist.get(cap))]}
-    db.child("csvTable").child(name).set(data)
-    user = db.child("csvTable").get()
-    users = user.val()
-    val = False
-    for i in users:
-        if i == name:
-            val = True
+        personname = db.child("idTable").order_by_key().equal_to(name).get()
+        for person in personname.each():
+            studentname = person.val()['Name']
+        data = {'Name': studentname,
+                'Location': [camname.get(caplist.get(cap)), datenow, timenow, str(caplist.get(cap))]}
+        db.child("csvTable").child(name).set(data)
+        user = db.child("csvTable").get()
+        users = user.val()
+        val = False
+        for i in users:
+            if i == name:
+                val = True
 
-    if val == True:
-        db.child("csvTable").child(name).update({"Location" :[ camname.get(caplist.get(cap)) , datenow , timenow ,str(caplist.get(cap))] })
-    else:
-        val =False
+        if val == True:
+            print("sending")
+            db.child("csvTable").child(name).update(
+                {"Location": [camname.get(caplist.get(cap)), datenow, timenow, str(caplist.get(cap))]})
+        else:
+            val = False
 
-encodeListKnown = findEncodings(images)
-#print("[INFO: Encodings Completed]")
+    encodeListKnown = findEncodings(images)
+    # print("[INFO: Encodings Completed]")
 
-index = 0  # starting index fo cameras : 0 being the webcam
-getcam = []  # empty list to store camera indexing
-caplist = {}  # empty dictionary to store video stream and the cam index
-while True:
-    cap = cv2.VideoCapture(index, cv2.CAP_DSHOW)
-    if not cap.read()[0]:
-        break
-    else:
-        getcam.append(index)
-    cap.release()
-    index += 1
+    index = 0  # starting index fo cameras : 0 being the webcam
+    getcam = []  # empty list to store camera indexing
+    caplist = {}  # empty dictionary to store video stream and the cam index
+    while True:
+        cap = cv2.VideoCapture(index, cv2.CAP_DSHOW)
+        if not cap.read()[0]:
+            break
+        else:
+            getcam.append(index)
+        cap.release()
+        index += 1
 
-for value in getcam:
-    current = cv2.VideoCapture(value)
-    caplist[current] = value
-#print("[INFO:",caplist,"]")
+    for value in getcam:
+        current = cv2.VideoCapture(value)
+        caplist[current] = value
+    print("[INFO:",caplist,"]")
 
-# The above code generates a dictionary with key as the name of the current
-# stream of video capture with the index from getcam as a value
-# the key <VideoCapture 0000017290F2F3B0> is used in the below code as the actual stream
-# where as the value is used for the display of which cam is showing , 0 always being the integrated webcam
+    # The above code generates a dictionary with key as the name of the current
+    # stream of video capture with the index from getcam as a value
+    # the key <VideoCapture 0000017290F2F3B0> is used in the below code as the actual stream
+    # where as the value is used for the display of which cam is showing , 0 always being the integrated webcam
 
-while True:
+    while True:
 
-    for cap in caplist:
+        for cap in caplist:
 
-        success, img = cap.read()
-        imgS = cv2.resize(img, (0, 0), None, 1, 1)
-        imgS = cv2.cvtColor(imgS, cv2.COLOR_BGR2RGB)
+            success, img = cap.read()
+            imgS = cv2.resize(img, (0, 0), None, 1, 1)
+            imgS = cv2.cvtColor(imgS, cv2.COLOR_BGR2RGB)
 
-        facesCurFrame = face_recognition.face_locations(imgS)
-        encodesCurFrame = face_recognition.face_encodings(imgS, facesCurFrame)
+            facesCurFrame = face_recognition.face_locations(imgS)
+            encodesCurFrame = face_recognition.face_encodings(imgS, facesCurFrame)
 
-        for (encodeFace, (top, right, bottom, left)) in zip(encodesCurFrame, facesCurFrame):
-            matches = face_recognition.compare_faces(encodeListKnown, encodeFace)
-            faceDis = face_recognition.face_distance(encodeListKnown, encodeFace)
-            matchIndex = np.argmin(faceDis)
-            count = 0
+            for (encodeFace, (top, right, bottom, left)) in zip(encodesCurFrame, facesCurFrame):
+                matches = face_recognition.compare_faces(encodeListKnown, encodeFace)
+                faceDis = face_recognition.face_distance(encodeListKnown, encodeFace)
+                matchIndex = np.argmin(faceDis)
+                count = 0
 
-            if matches[matchIndex]:
-                name = classRollnos[matchIndex]
-                #cv2.rectangle(img, (left, top), (right, bottom), (0, 255, 0), 2)
-                #y = top - 15 if top - 15 > 15 else top + 15
-                #cv2.putText(img, name, (left, y), cv2.FONT_HERSHEY_SIMPLEX,0.75, (0, 255, 0), 2)
-                timelocated(name, cap)
+                if matches[matchIndex]:
+                    name = classRollnos[matchIndex]
+                    #cv2.rectangle(img, (left, top), (right, bottom), (0, 255, 0), 2)
+                    #y = top - 15 if top - 15 > 15 else top + 15
+                    #cv2.putText(img, name, (left, y), cv2.FONT_HERSHEY_SIMPLEX,0.75, (0, 255, 0), 2)
+                    timelocated(name, cap)
 
-            #else:
-                #name = "Unknown"
-                #cv2.rectangle(img, (left, top), (right, bottom), (0, 255, 0), 2)
-                #y = top - 15 if top - 15 > 15 else top + 15
-                #cv2.putText(img, name, (left, y), cv2.FONT_HERSHEY_SIMPLEX,0.75, (0, 255, 0), 2)
+                #else:
+                    #name = "Unknown"
+                    #cv2.rectangle(img, (left, top), (right, bottom), (0, 255, 0), 2)
+                    #y = top - 15 if top - 15 > 15 else top + 15
+                    #cv2.putText(img, name, (left, y), cv2.FONT_HERSHEY_SIMPLEX,0.75, (0, 255, 0), 2)
 
-        #cv2.imshow(str(caplist.get(cap)), img)
-        #cv2.waitKey(1)
+            #cv2.imshow(str(caplist.get(cap)), img)
+            #cv2.waitKey(1)
