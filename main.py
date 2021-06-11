@@ -1,17 +1,30 @@
+
 def mainfirebaseinteraction():
     import cv2
     import numpy as np
     import face_recognition
     import os
     import datetime
+    import dlib
     import pyrebase
 
     firebaseConfig = {
+        "apiKey": "",
+        "storageURL": "",
+        "databaseURL": "",
+        "authDomain": "",
+        "projectId": "",
+        "storageBucket": "",
+        "messagingSenderId": "",
+        "appId": "",
+        "measurementId": "",
+        "serviceAccount": ""
     }
     firebase = pyrebase.initialize_app(firebaseConfig)
 
     db = firebase.database()
     storage = firebase.storage()
+
 
     path = 'ImageSourceDirectory'
     images = []
@@ -99,10 +112,12 @@ def mainfirebaseinteraction():
     while True:
 
         for cap in caplist:
-
-            success, img = cap.read()
-            imgS = cv2.resize(img, (0, 0), None, 1, 1)
-            imgS = cv2.cvtColor(imgS, cv2.COLOR_BGR2RGB)
+            try:
+                success, img = cap.read()
+                imgS = cv2.resize(img, (0, 0), None, 1, 1)
+                imgS = cv2.cvtColor(imgS, cv2.COLOR_BGR2RGB)
+            except cv2.error as error:
+                print("[Error]: {}".format(error))
 
             facesCurFrame = face_recognition.face_locations(imgS)
             encodesCurFrame = face_recognition.face_encodings(imgS, facesCurFrame)
@@ -115,16 +130,19 @@ def mainfirebaseinteraction():
 
                 if matches[matchIndex]:
                     name = classRollnos[matchIndex]
-                    #cv2.rectangle(img, (left, top), (right, bottom), (0, 255, 0), 2)
-                    #y = top - 15 if top - 15 > 15 else top + 15
-                    #cv2.putText(img, name, (left, y), cv2.FONT_HERSHEY_SIMPLEX,0.75, (0, 255, 0), 2)
+                    cv2.rectangle(img, (left, top), (right, bottom), (0, 255, 0), 2)
+                    y = top - 15 if top - 15 > 15 else top + 15
+                    cv2.putText(img, name, (left, y), cv2.FONT_HERSHEY_SIMPLEX,0.75, (0, 255, 0), 2)
                     timelocated(name, cap)
 
-                #else:
-                    #name = "Unknown"
-                    #cv2.rectangle(img, (left, top), (right, bottom), (0, 255, 0), 2)
-                    #y = top - 15 if top - 15 > 15 else top + 15
-                    #cv2.putText(img, name, (left, y), cv2.FONT_HERSHEY_SIMPLEX,0.75, (0, 255, 0), 2)
+                else:
+                    name = "Unknown"
+                    cv2.rectangle(img, (left, top), (right, bottom), (0, 255, 0), 2)
+                    y = top - 15 if top - 15 > 15 else top + 15
+                    cv2.putText(img, name, (left, y), cv2.FONT_HERSHEY_SIMPLEX,0.75, (0, 255, 0), 2)
 
-            #cv2.imshow(str(caplist.get(cap)), img)
-            #cv2.waitKey(1)
+            try:
+                cv2.imshow(str(caplist.get(cap)), img)
+            except cv2.error as error:
+                print("[Error]: {}".format(error))
+            cv2.waitKey(1)

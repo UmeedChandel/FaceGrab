@@ -73,21 +73,21 @@ class Ui_ResultPage(object):
         self.label_2.setFont(font)
         self.label_2.setStyleSheet("color: rgb(9, 13, 84);")
         self.label_2.setObjectName("label_2")
-        self.exit = QtWidgets.QPushButton(Dialog)
-        self.exit.setGeometry(QtCore.QRect(440, 600, 93, 28))
+        self.back = QtWidgets.QPushButton(Dialog)
+        self.back.setGeometry(QtCore.QRect(440, 600, 93, 28))
         font = QtGui.QFont()
         font.setFamily("Arial Rounded MT Bold")
         font.setPointSize(10)
         font.setBold(False)
         font.setWeight(50)
-        self.exit.setFont(font)
-        self.exit.setCursor(QtGui.QCursor(QtCore.Qt.OpenHandCursor))
-        self.exit.setStyleSheet("border-radius : 10;\n"
+        self.back.setFont(font)
+        self.back.setCursor(QtGui.QCursor(QtCore.Qt.OpenHandCursor))
+        self.back.setStyleSheet("border-radius : 10;\n"
 "background-color: rgb(0,0,0);\n"
 "color:rgb(255,255,255);")
 
-        self.exit.setObjectName("exit")
-        self.exit.clicked.connect(Dialog.close)
+        self.back.setObjectName("back")
+        self.back.clicked.connect(Dialog.close)
         self.result_cam_id = QtWidgets.QLabel(Dialog)
         self.result_cam_id.setGeometry(QtCore.QRect(190, 480, 161, 16))
         font = QtGui.QFont()
@@ -104,30 +104,6 @@ class Ui_ResultPage(object):
         self.label_3.setFont(font)
         self.label_3.setStyleSheet("color: rgb(9, 13, 84);")
         self.label_3.setObjectName("label_3")
-        self.back = QtWidgets.QPushButton(Dialog)
-        self.back.setGeometry(QtCore.QRect(150, 600, 93, 28))
-        font = QtGui.QFont()
-        font.setFamily("Arial Rounded MT Bold")
-        font.setPointSize(10)
-        font.setBold(False)
-        font.setWeight(50)
-        font.setKerning(True)
-        self.back.setFont(font)
-        self.back.setCursor(QtGui.QCursor(QtCore.Qt.OpenHandCursor))
-        self.back.setStyleSheet("QPushButton{\n"
-"border-radius : 10;\n"
-"background-color: rgb(20,135,193);\n"
-"}\n"
-"QPushButton:hover{\n"
-"background-color: rgb(16,108,154);\n"
-"color:rgb(249,253,254);\n"
-"}\n"
-"QpushButton:pressed{\n"
-"background-color: rgb(rgb(17,116,175));\n"
-"}\n"
-"")
-        self.back.setObjectName("back")
-        self.back.clicked.connect(Dialog.close)
 
         self.result_date = QtWidgets.QLabel(Dialog)
         self.result_date.setGeometry(QtCore.QRect(480, 520, 161, 16))
@@ -152,6 +128,7 @@ class Ui_ResultPage(object):
         img = "ImageSourceDirectory/" + id + ".jpg"
         self.result_photo.setPixmap(QtGui.QPixmap(img))
         self.result_photo.setScaledContents(True)
+
         self.result_photo.setObjectName("result_photo")
         self.result_loc = QtWidgets.QLabel(Dialog)
         self.result_loc.setGeometry(QtCore.QRect(190, 520, 161, 16))
@@ -197,7 +174,6 @@ class Ui_ResultPage(object):
         self.label_6.setText(_translate("Dialog", "Time:"))
         self.label_8.setText(_translate("Dialog", "Date:"))
         self.label_2.setText(_translate("Dialog", "GRAB"))
-        self.exit.setText(_translate("Dialog", "EXIT"))
         self.label_3.setText(_translate("Dialog", "RESULTS"))
         self.back.setText(_translate("Dialog", "BACK"))
         self.label_4.setText(_translate("Dialog", "Name:"))
